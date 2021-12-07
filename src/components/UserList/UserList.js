@@ -26,6 +26,7 @@ const UserList = ({ users, isLoading }) => {
   const handleMouseLeave = () => {
     setHoveredUserId();
   };
+  console.log(users);
 
 
   return (
@@ -34,7 +35,10 @@ const UserList = ({ users, isLoading }) => {
         <CheckBox value="BR" label="Brazil" onChange={handleChanged} />
         <CheckBox value="AU" label="Australia" onChange={handleChanged} />
         <CheckBox value="CA" label="Canada" onChange={handleChanged} />
-        <CheckBox value="DE" label="Germany" onChange={handleChanged} />
+        <CheckBox value="GE" label="Germany" onChange={handleChanged} />
+        {/* Bonus */}
+        <CheckBox value="DE" label="Denmark" onChange={handleChanged} /> 
+        {/* Bonus */}
       </S.Filters>
       <S.List>
         {!markedCountry.length ? users.map((user, index) => {
