@@ -8,6 +8,16 @@ import * as S from "./style";
 
 const UserList = ({ users, isLoading }) => {
   const [hoveredUserId, setHoveredUserId] = useState();
+  const [markedCountry, setMarkedCountry] = useState([]);
+  const [filter, setFilter] = useState(false);
+  const handleChanged = (value, checked, label) => {
+    if (checked) {
+      markedCountry.push(...[label]);
+      setFilter(!filter);
+    } else {
+      setMarkedCountry(markedCountry.filter(e => e !== label));
+    }
+  }
 
   const handleMouseEnter = (index) => {
     setHoveredUserId(index);
@@ -17,16 +27,17 @@ const UserList = ({ users, isLoading }) => {
     setHoveredUserId();
   };
 
+
   return (
     <S.UserList>
       <S.Filters>
-        <CheckBox value="BR" label="Brazil" />
-        <CheckBox value="AU" label="Australia" />
-        <CheckBox value="CA" label="Canada" />
-        <CheckBox value="DE" label="Germany" />
+        <CheckBox value="BR" label="Brazil" onChange={handleChanged} />
+        <CheckBox value="AU" label="Australia" onChange={handleChanged} />
+        <CheckBox value="CA" label="Canada" onChange={handleChanged} />
+        <CheckBox value="DE" label="Germany" onChange={handleChanged} />
       </S.Filters>
       <S.List>
-        {users.map((user, index) => {
+        {!markedCountry.length ? users.map((user, index) => {
           return (
             <S.User
               key={index}
@@ -53,13 +64,48 @@ const UserList = ({ users, isLoading }) => {
               </S.IconButtonWrapper>
             </S.User>
           );
-        })}
+        }) 
+        : (
+          
+          users.map((user, index) => {
+            return (
+              markedCountry.includes(user.location.country) &&  
+              <S.User
+                key={index}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <S.UserPicture src={user?.picture.large} alt="" />
+                <S.UserInfo>
+                  <Text size="22px" bold>
+                    {user?.name.title} {user?.name.first} {user?.name.last}
+                  </Text>
+                  <Text size="14px">{user?.email}</Text>
+                  <Text size="14px">
+                    {user?.location.street.number} {user?.location.street.name}
+                  </Text>
+                  <Text size="14px">
+                    {user?.location.city} {user?.location.country}
+                  </Text>
+                </S.UserInfo>
+                <S.IconButtonWrapper isVisible={index === hoveredUserId}>
+                  <IconButton>
+                    <FavoriteIcon color="error" />
+                  </IconButton>
+                </S.IconButtonWrapper>
+              </S.User>
+            );
+          })
+        )}
+
+
+        
         {isLoading && (
           <S.SpinnerWrapper>
             <Spinner color="primary" size="45px" thickness={6} variant="indeterminate" />
           </S.SpinnerWrapper>
         )}
-      </S.List>
+      </S.List> 
     </S.UserList>
   );
 };
